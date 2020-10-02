@@ -1,32 +1,28 @@
-# mediasoup-demo-simple
+# mediasoup server for vitalsigns
 
-Minimal simple demo app for mediasoup `v3`.
+Minimal simple broadcaster created using mediasoup `v3`.
 
-## Feat
-
-- use only 1 worker, 1 router = 1 room
-- VP8 only
-- send/recv multiple tracks
-
-## Setup client
+## Example viewer can be found in 'mediasoup-viewer'
 
 ```sh
-cd client
+cd mediasoup-viewer-example
 
 npm i
 npm start
 ```
 
-Open `http://localhost:1234` on browser.
+Example code is in 'index.js'. This viewer connects to a socket server hosted at `wss://localhost:8000`.
+(Change this address to connect to a different server.)
 
-## Setup server
+## Setup server and broadcaster
 
 ```sh
-cd server
+cd mediasoup-server
 
 npm i
 npm start
 ```
 
-Run websocket server on `http:localost:2345`.
-Also media server runs on `http:localhost:{3000-4000}`.
+Websocket server and broadcaster run on `https://localhost:8000`. Change main.js to update port and ssl certificate location.
+
+Media server uses ports 3000-4000.

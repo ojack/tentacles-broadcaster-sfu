@@ -1,0 +1,21 @@
+{
+  "name": "mediasoup-broadcaster",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "watchify index.js -o public/bundle.js -v"
+  },
+  "author": "ojack",
+  "license": "ISC",
+  "dependencies": {
+    "choo": "^7.1.0",
+    "choo-devtools": "^3.0.4",
+    "enumerate-devices": "^1.1.1",
+    "events": "^3.2.0",
+    "mediasoup-client": "^3.6.16",
+    "protoo-client": "^4.0.4",
+    "watchify": "^3.11.1"
+  }
+}

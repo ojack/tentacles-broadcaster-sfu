@@ -1,0 +1,17 @@
+{
+  "name": "mediasoup-demo-simple-server",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "node main.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "mediasoup": "^3.1.1",
+    "protoo-server": "^4.0.3"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.1",
+    "watchify": "^3.11.1"
+  }
+}
