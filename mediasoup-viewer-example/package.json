@@ -1,0 +1,20 @@
+{
+  "name": "mediasoup-viewer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "budo index.js --open --live",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "ojack",
+  "license": "ISC",
+  "dependencies": {
+    "events": "^3.2.0",
+    "mediasoup-client": "^3.6.16",
+    "protoo-client": "^4.0.4"
+  },
+  "devDependencies": {
+    "budo": "^11.6.4"
+  }
+}

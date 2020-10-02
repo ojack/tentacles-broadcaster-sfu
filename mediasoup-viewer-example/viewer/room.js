@@ -1,8 +1,8 @@
-import { EventEmitter } from "events";
-import { Device } from "mediasoup-client";
-import { WebSocketTransport, Peer } from "protoo-client";
+const { EventEmitter } = require("events")
+const { Device } = require("mediasoup-client")
+const { WebSocketTransport, Peer }  = require("protoo-client")
 
-export default class Room extends EventEmitter {
+module.exports = class Room extends EventEmitter {
   constructor() {
     super();
 
@@ -11,10 +11,10 @@ export default class Room extends EventEmitter {
     this.recvTransport = null;
   }
 
-  join() {
+  join(server = `ws://localhost:2345`) {
     console.warn("room.join()");
-  //  const wsTransport = new WebSocketTransport(`ws://localhost:2345`);
-      const wsTransport = new WebSocketTransport(`wss://localhost:8000`)
+    const wsTransport = new WebSocketTransport(server);
+
     this.peer = new Peer(wsTransport);
     this.peer.on("open", this.onPeerOpen.bind(this));
     this.peer.on("request", this.onPeerRequest.bind(this));
@@ -148,14 +148,15 @@ export default class Room extends EventEmitter {
     switch (req.method) {
       // if you decline this offer, will not request `newConsumer`
       case "newConsumerOffer": {
-        if (
-          confirm(`Do you consume ${req.data.kind} from ${req.data.peerId}?`)
-        ) {
-          resolve({ accept: true });
-          return;
-        }
-        resolve({ accept: false });
-        break;
+        // if (
+        //   confirm(`Do you consume ${req.data.kind} from ${req.data.peerId}?`)
+        // ) {
+        //   resolve({ accept: true });
+        //   return;
+        // }
+        // resolve({ accept: false });
+        resolve({ accept: true });
+         break;
       }
       case "newConsumer": {
         this.recvTransport
