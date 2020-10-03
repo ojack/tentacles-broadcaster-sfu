@@ -1,4 +1,4 @@
-const Room = require('./lib/room.js')
+const Room = require('./room.js')
 
 module.exports = ({ videoEl, server = `ws://localhost:2345`}) => {
   const room = new Room()
@@ -27,12 +27,14 @@ module.exports = ({ videoEl, server = `ws://localhost:2345`}) => {
   });
 
   room.on("@consumerClosed", (consumer) => {
-    console.log(consumer.id)
-    removeTrack(consumer.id)
+    console.log(consumer)
+    console.log(consumer.consumerId)
+    removeTrack(consumer.consumerId)
     //removeMediaEl(document.body, "data-search-id", consumerId);
   });
 
   room.on("@producerClosed", ({ producerId }) => {
+    console.log('producer closed')
   //  removeMediaEl(localTracks, "data-search-id", producerId);
   });
 

@@ -29,6 +29,7 @@ module.exports = class Room extends EventEmitter {
     const audioProducer = await this.sendTransport.produce({
       track
     });
+    track.onended = () => { console.log('track ended!!')}
     audioProducer.on("trackended", async () => {
       console.warn("producer.close() by trackended");
       await this._closeProducer(audioProducer);

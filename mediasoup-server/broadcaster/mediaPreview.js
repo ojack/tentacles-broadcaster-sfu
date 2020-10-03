@@ -32,6 +32,7 @@ ${options.map(
         this.devices.audio = devices.filter(elem => elem.kind == 'audioinput')
         this.devices.video = devices.filter(elem => elem.kind == 'videoinput')
         this.devices.audio.push({ label: 'no audio', deviceId: 'false' })
+        this.devices.video.push({ label: 'screen', deviceId: 'screen' })
         this.devices.video.push({ label: 'no video', deviceId: 'false' })
         if (this.devices.audio.length > 0) {
           this.selectedDevices.audio = this.devices.audio[this.devices.audio.length -1]
@@ -50,6 +51,8 @@ ${options.map(
         const video  = document.createElement('video')
         video.autoplay = true
         this.mediaDivs.video = video
+        // this.mediaDivs.video.width = 600
+        // this.mediaDivs.video.height = 400
         this.mediaDivs.audio = document.createElement('audio')
         this.mediaDivs.audio.controls = true
         this.innerDiv.appendChild(this.mediaDivs.video)
@@ -61,6 +64,18 @@ ${options.map(
         //   this.map.setCenter(center)
         // }
         return false
+      }
+
+      getScreen() {
+        navigator.mediaDevices
+         .getDisplayMedia({ video: true })
+         .then(stream => {
+           this.streams.video = stream
+           this.tracks.video = stream.getVideoTracks()[0]
+           this.mediaDivs.video.srcObject = stream
+          // stream.getVideoTracks()[0]
+         })
+         .catch(console.error);
       }
 
       /* Inconsistent behavior between audio and video for applying constraints.
@@ -103,12 +118,16 @@ ${options.map(
           this.selectedDevices[kind] = this.devices[kind].filter(
             device => device.deviceId === e.target.value
           )[0]
-          if (this.selectedDevices[kind].deviceId === 'false') {
-            this.isActive[kind] = false
+          if (this.selectedDevices[kind].deviceId === 'screen') {
+            this.getScreen()
           } else {
-            this.isActive[kind] = true
+            if (this.selectedDevices[kind].deviceId === 'false') {
+              this.isActive[kind] = false
+            } else {
+              this.isActive[kind] = true
+            }
+            this.getMedia(kind)
           }
-          this.getMedia(kind)
         }}>
         ${dropdown(
           this.devices[kind].map((device, index) => ({ value: device.deviceId, label: device.label })),
@@ -127,7 +146,7 @@ ${options.map(
       this.dropdownDiv = html`<div></div>`
       //  this.dropdownDiv.appendChild(this.renderDropdowns())
       this.innerDiv = html`<div id="preview-container"></div>`
-      return html`<div>
+      return html`<div class="">
       ${this.dropdownDiv}
       ${this.innerDiv}
       </div>`

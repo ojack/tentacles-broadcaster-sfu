@@ -12,15 +12,19 @@ app.mount('body')
 
 function mainView (state, emit) {
   return html`
-    <body>
-      <button onclick=${() => emit('toggle broadcast')}> Go live! </button>
-      <div> ${state.broadcaster.peers.length} connected </div>
-      <div>
-        media preview
-        ${state.cache(MediaPreview, 'media-preview').render()}
+    <body class="w-100 h-100 mw-100 bg-dark-gray near-white">
+      <div class="pa2">
+        <button onclick=${() => emit('toggle broadcast')}> Go live! </button>
+        <div > ${state.broadcaster.peers.length} connected </div>
       </div>
-      <div>
-        media broadcast
+      <div class="flex w-100">
+        <div class="pa2 ba flex-auto">
+          media preview
+          ${state.cache(MediaPreview, 'media-preview').render()}
+        </div>
+        <div class="pa2 ba flex-auto">
+          media broadcast
+        </div>
       </div>
     </body>
   `
@@ -39,16 +43,22 @@ function mediaStore (state, emitter) {
     video: null,
     audio: null
   }
+
+  state.isBroadcasting = false
   state.broadcaster = createBroadcaster({
     server: `wss://localhost:8000`,
     onUpdate: updateBroadcast
   })
 
   emitter.on('toggle broadcast', function () {
-    console.log('TOGLLE', state.preview.streams)
-    if(state.preview.tracks.video !== null) {
-      state.broadcaster.broadcastVideo(state.preview.tracks.video)
-    }
+    // console.log('TOGLLE', state.preview.streams)
+    // if(!state.isBroadcasting) {
+    //  if(state.preview.tracks.video !== null) {
+      //  state.broadcaster.updateBroadcast(state.preview.tracks)
+          state.broadcaster.broadcastVideo(state.preview.tracks.video)
+    //  }
+    // }
+    // state.isBroadcasting =! state.isBroadcasting
   })
 
   function updateBroadcast() {
