@@ -13,18 +13,14 @@ app.mount('body')
 
 function mainView (state, emit) {
   return html`
-    <body class="w-100 h-100 mw-100 bg-dark-gray near-white">
-      <div class="pa2">
-        <button onclick=${() => emit('toggle broadcast')}> ${state.isBroadcasting? 'Stop broadcast' : 'Go live!'} </button>
-        <div > ${state.broadcaster.peers.length} connected </div>
+    <body class="w-100 h-100 mw-100  near-white ${state.isBroadcasting?'bg-dark-green':'bg-dark-gray'}">
+      <div class="pa2 flex">
+        <button class="ma2 pointer" onclick=${() => emit('toggle broadcast')}> ${state.isBroadcasting? 'Stop broadcast' : 'Go live!'} </button>
+        <div class="f2 ma2"> ${state.broadcaster.peers.length} viewer connected </div>
       </div>
-      <div class="flex w-100">
-        <div class="pa2 ba flex-auto">
-          media preview
+      <div class="flex w-100 pa2">
+        <div class="pa4 pt0 ba flex-auto">
           ${state.cache(MediaPreview, 'media-preview').render()}
-        </div>
-        <div class="pa2 ba flex-auto">
-          media broadcast
         </div>
       </div>
     </body>
@@ -320,15 +316,15 @@ ${options.map(
       }
 
       load (element) {
-        const video  = document.createElement('video')
-        video.autoplay = true
-        this.mediaDivs.video = video
-        // this.mediaDivs.video.width = 600
-        // this.mediaDivs.video.height = 400
-        this.mediaDivs.audio = document.createElement('audio')
-        this.mediaDivs.audio.controls = true
-        this.innerDiv.appendChild(this.mediaDivs.video)
-        this.innerDiv.appendChild(this.mediaDivs.audio)
+        // const video  = document.createElement('video')
+        // video.autoplay = true
+        // this.mediaDivs.video = video
+        // // this.mediaDivs.video.width = 600
+        // // this.mediaDivs.video.height = 400
+        // this.mediaDivs.audio = document.createElement('audio')
+        // this.mediaDivs.audio.controls = true
+        // this.innerDiv.appendChild(this.mediaDivs.video)
+        // this.innerDiv.appendChild(this.mediaDivs.audio)
       }
 
       update (center) {
@@ -384,9 +380,12 @@ ${options.map(
     }
 
     renderDropdowns() {
-      const dropdowns = [ 'audio', 'video' ].map(
+      const dropdowns = [ 'video', 'audio' ].map(
         kind =>
-        html`<select name=${kind} class="w-100 pa2 white ttu ba b--white pointer" style="background:none" onchange=${e => {
+        html`
+      <div class="mt4">
+        <div>Select ${kind}:</div>
+        <select name=${kind} class="w4 dim pa2 white ttu ba b--white pointer" style="background:none" onchange=${e => {
           this.selectedDevices[kind] = this.devices[kind].filter(
             device => device.deviceId === e.target.value
           )[0]
@@ -405,9 +404,10 @@ ${options.map(
           this.devices[kind].map((device, index) => ({ value: device.deviceId, label: device.label })),
           this.selectedDevices[kind].deviceId
         )}
-        </select>`
+        </select>
+        </div>`
       )
-      console.log('dropdowns', dropdowns)
+    //  console.log('dropdowns', dropdowns)
       //  this.dropdowns = dropdowns
       return dropdowns
     }
@@ -417,10 +417,26 @@ ${options.map(
       //this.local.center = center
       this.dropdownDiv = html`<div></div>`
       //  this.dropdownDiv.appendChild(this.renderDropdowns())
-      this.innerDiv = html`<div id="preview-container"></div>`
+    //  this.innerDiv = html`<div id="preview-container"></div>`
+      const video  = document.createElement('video')
+      video.autoplay = true
+      this.mediaDivs.video = video
+      video.className = "w-100 h-100 bg-black"
+      // this.mediaDivs.video.width = 600
+      // this.mediaDivs.video.height = 400
+      this.mediaDivs.audio = document.createElement('audio')
+      this.mediaDivs.audio.controls = true
       return html`<div class="">
       ${this.dropdownDiv}
-      ${this.innerDiv}
+          <div class="w5 h5 mt4" style="width:100%;height:500px">
+            Video preview
+            ${this.mediaDivs.video}
+          </div>
+          <div class="mt4">
+            <div> Audio preview </div>
+            <div>${this.mediaDivs.audio}</div>
+          </div>
+
       </div>`
     }
   }
