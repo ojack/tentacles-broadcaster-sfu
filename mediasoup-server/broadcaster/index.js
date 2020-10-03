@@ -14,7 +14,7 @@ function mainView (state, emit) {
   return html`
     <body class="w-100 h-100 mw-100 bg-dark-gray near-white">
       <div class="pa2">
-        <button onclick=${() => emit('toggle broadcast')}> Go live! </button>
+        <button onclick=${() => emit('toggle broadcast')}> ${state.isBroadcasting? 'Stop broadcast' : 'Go live!'} </button>
         <div > ${state.broadcaster.peers.length} connected </div>
       </div>
       <div class="flex w-100">
@@ -55,10 +55,23 @@ function mediaStore (state, emitter) {
     // if(!state.isBroadcasting) {
     //  if(state.preview.tracks.video !== null) {
       //  state.broadcaster.updateBroadcast(state.preview.tracks)
-          state.broadcaster.broadcastVideo(state.preview.tracks.video)
+    // state.broadcaster.updateBroadcast(state.preview.tracks)
+        //  state.broadcaster.broadcastVideo(state.preview.tracks.video)
     //  }
     // }
-    // state.isBroadcasting =! state.isBroadcasting
+    state.isBroadcasting =! state.isBroadcasting
+    if(!state.isBroadcasting) {
+      state.broadcaster.updateBroadcast({ audio: null, video: null})
+    } else {
+      state.broadcaster.updateBroadcast(state.preview.tracks)
+    }
+    emitter.emit('render')
+  })
+
+  emitter.on('updateMedia', () => {
+    if(state.isBroadcasting) {
+      state.broadcaster.updateBroadcast(state.preview.tracks)
+    }
   })
 
   function updateBroadcast() {

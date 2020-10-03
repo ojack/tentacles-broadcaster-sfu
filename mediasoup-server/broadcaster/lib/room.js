@@ -137,7 +137,7 @@ module.exports = class Room extends EventEmitter {
   }
 
   async _closeProducer(producer) {
-    producer.close();
+    //producer.close();
     await this.peer
       .request("closeProducer", { producerId: producer.id })
       .catch(console.error);

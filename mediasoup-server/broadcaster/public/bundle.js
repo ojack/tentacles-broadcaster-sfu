@@ -15,7 +15,7 @@ function mainView (state, emit) {
   return html`
     <body class="w-100 h-100 mw-100 bg-dark-gray near-white">
       <div class="pa2">
-        <button onclick=${() => emit('toggle broadcast')}> Go live! </button>
+        <button onclick=${() => emit('toggle broadcast')}> ${state.isBroadcasting? 'Stop broadcast' : 'Go live!'} </button>
         <div > ${state.broadcaster.peers.length} connected </div>
       </div>
       <div class="flex w-100">
@@ -56,10 +56,23 @@ function mediaStore (state, emitter) {
     // if(!state.isBroadcasting) {
     //  if(state.preview.tracks.video !== null) {
       //  state.broadcaster.updateBroadcast(state.preview.tracks)
-          state.broadcaster.broadcastVideo(state.preview.tracks.video)
+    // state.broadcaster.updateBroadcast(state.preview.tracks)
+        //  state.broadcaster.broadcastVideo(state.preview.tracks.video)
     //  }
     // }
-    // state.isBroadcasting =! state.isBroadcasting
+    state.isBroadcasting =! state.isBroadcasting
+    if(!state.isBroadcasting) {
+      state.broadcaster.updateBroadcast({ audio: null, video: null})
+    } else {
+      state.broadcaster.updateBroadcast(state.preview.tracks)
+    }
+    emitter.emit('render')
+  })
+
+  emitter.on('updateMedia', () => {
+    if(state.isBroadcasting) {
+      state.broadcaster.updateBroadcast(state.preview.tracks)
+    }
   })
 
   function updateBroadcast() {
@@ -212,7 +225,7 @@ module.exports = class Room extends EventEmitter {
   }
 
   async _closeProducer(producer) {
-    producer.close();
+    //producer.close();
     await this.peer
       .request("closeProducer", { producerId: producer.id })
       .catch(console.error);
@@ -274,6 +287,7 @@ ${options.map(
   module.exports = class MediaPreview extends Component {
     constructor (id, state, emit) {
       super(id)
+      this.emit = emit
       state.preview = this
       this.local = state.components[id] = {}
       this.isActive = { audio: false, video: false }
@@ -331,6 +345,7 @@ ${options.map(
            this.streams.video = stream
            this.tracks.video = stream.getVideoTracks()[0]
            this.mediaDivs.video.srcObject = stream
+           this.emit('updateMedia')
           // stream.getVideoTracks()[0]
          })
          .catch(console.error);
@@ -352,11 +367,9 @@ ${options.map(
             .getTracks()
             .filter(track => track.kind == kind)[0]
             this.streams[kind] = stream
-            console.log( `%c got user media (${kind})`,'background: #0044ff; color: #f00',
-            stream.getTracks(),
-            this.tracks
-          )
+            console.log( `%c got user media (${kind})`,'background: #0044ff; color: #f00',  stream.getTracks(),this.tracks)
           this.mediaDivs[kind].srcObject = stream
+            this.emit('updateMedia')
         })
         .catch(err => {
           this.log('error', err)
@@ -365,6 +378,7 @@ ${options.map(
         this.tracks[kind] = null
         this.streams[kind] = null
         this.mediaDivs[kind].srcObject = null
+        this.emit('updateMedia')
         //  this.rerender()
       }
     }
@@ -424,31 +438,55 @@ module.exports = ({ server = `ws://localhost:2345`, onUpdate = () => {}}) => {
     room.sendAudio(track)
   }
 
-  const broadcastVideo = async (track) => {
-    // if(producers.video !== null) {
-    //   console.log('replacing track', producers.video)
-    //   producers.video.replaceTrack(track)
-    // } else {
-    if(track !== null) {
-      const producer = await room.sendVideo(track)
-      console.log('producer is', producer)
-      if(producers.video !== null) producers.video.close()
-      producers.video = producer
-    } else {
-      console.log('closing producer', producers.video, producers.video.track)
-    //  producers.video.close()
-
-      room._closeProducer(producers.video)
-      // producers.video.track.stop()
-      producers.video = null
-    }
-  //  }
+  const updateBroadcast = (tracks) => {
+    Object.keys(tracks).forEach((kind) => {
+      updateMedia(tracks[kind], kind)
+    })
   }
 
+  const updateMedia = async (track, kind) => {
+    if(track !== null) {
+      console.log(track, producers[kind])
+      if(producers[kind] === null) {
+        let producer
+        if(kind === 'video') {
+          producer = await room.sendVideo(track)
+        } else {
+          producer = await room.sendAudio(track)
+        }
+        // console.log('producer is', producer)
+        // if(producers[kind] !== null) producers[kind].close()
+        producers[kind] = producer
+      } else {
+         if(track !== producers[kind].track) {
+           let producer
+           if(kind === 'video') {
+             producer = await room.sendVideo(track)
+           } else {
+             producer = await room.sendAudio(track)
+           }
+           room._closeProducer(producers[kind])
+           producers[kind] = producer
+         } else {
+           console.log('track already exists!')
+         }
+      }
+    } else {
+      if(producers[kind] !== null) {
+        console.log('closing producer', producers[kind], producers[kind].track)
+      //  producers[kind].close()
+
+        room._closeProducer(producers[kind])
+        // producers[kind].track.stop()
+        producers[kind] = null
+      }
+    }
+  }
 
 
   room.once("@open", ({ peers }) => {
     console.log(`${peers.length} peers in this room.`, peers);
+    onUpdate()
     peers.forEach((peer) => _peers.push(peer))
 
     room.on("@peerJoined", (obj) => {
@@ -475,7 +513,8 @@ module.exports = ({ server = `ws://localhost:2345`, onUpdate = () => {}}) => {
   return {
     room: room,
     peers: _peers,
-    broadcastVideo: broadcastVideo
+    // broadcastVideo: broadcastVideo,
+    updateBroadcast: updateBroadcast
   //  updateBroadcast
   }
 }

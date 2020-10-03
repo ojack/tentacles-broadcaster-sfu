@@ -16,6 +16,7 @@ ${options.map(
   module.exports = class MediaPreview extends Component {
     constructor (id, state, emit) {
       super(id)
+      this.emit = emit
       state.preview = this
       this.local = state.components[id] = {}
       this.isActive = { audio: false, video: false }
@@ -73,6 +74,7 @@ ${options.map(
            this.streams.video = stream
            this.tracks.video = stream.getVideoTracks()[0]
            this.mediaDivs.video.srcObject = stream
+           this.emit('updateMedia')
           // stream.getVideoTracks()[0]
          })
          .catch(console.error);
@@ -94,11 +96,9 @@ ${options.map(
             .getTracks()
             .filter(track => track.kind == kind)[0]
             this.streams[kind] = stream
-            console.log( `%c got user media (${kind})`,'background: #0044ff; color: #f00',
-            stream.getTracks(),
-            this.tracks
-          )
+            console.log( `%c got user media (${kind})`,'background: #0044ff; color: #f00',  stream.getTracks(),this.tracks)
           this.mediaDivs[kind].srcObject = stream
+            this.emit('updateMedia')
         })
         .catch(err => {
           this.log('error', err)
@@ -107,6 +107,7 @@ ${options.map(
         this.tracks[kind] = null
         this.streams[kind] = null
         this.mediaDivs[kind].srcObject = null
+        this.emit('updateMedia')
         //  this.rerender()
       }
     }

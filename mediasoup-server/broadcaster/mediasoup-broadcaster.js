@@ -10,31 +10,55 @@ module.exports = ({ server = `ws://localhost:2345`, onUpdate = () => {}}) => {
     room.sendAudio(track)
   }
 
-  const broadcastVideo = async (track) => {
-    // if(producers.video !== null) {
-    //   console.log('replacing track', producers.video)
-    //   producers.video.replaceTrack(track)
-    // } else {
-    if(track !== null) {
-      const producer = await room.sendVideo(track)
-      console.log('producer is', producer)
-      if(producers.video !== null) producers.video.close()
-      producers.video = producer
-    } else {
-      console.log('closing producer', producers.video, producers.video.track)
-    //  producers.video.close()
-
-      room._closeProducer(producers.video)
-      // producers.video.track.stop()
-      producers.video = null
-    }
-  //  }
+  const updateBroadcast = (tracks) => {
+    Object.keys(tracks).forEach((kind) => {
+      updateMedia(tracks[kind], kind)
+    })
   }
 
+  const updateMedia = async (track, kind) => {
+    if(track !== null) {
+      console.log(track, producers[kind])
+      if(producers[kind] === null) {
+        let producer
+        if(kind === 'video') {
+          producer = await room.sendVideo(track)
+        } else {
+          producer = await room.sendAudio(track)
+        }
+        // console.log('producer is', producer)
+        // if(producers[kind] !== null) producers[kind].close()
+        producers[kind] = producer
+      } else {
+         if(track !== producers[kind].track) {
+           let producer
+           if(kind === 'video') {
+             producer = await room.sendVideo(track)
+           } else {
+             producer = await room.sendAudio(track)
+           }
+           room._closeProducer(producers[kind])
+           producers[kind] = producer
+         } else {
+           console.log('track already exists!')
+         }
+      }
+    } else {
+      if(producers[kind] !== null) {
+        console.log('closing producer', producers[kind], producers[kind].track)
+      //  producers[kind].close()
+
+        room._closeProducer(producers[kind])
+        // producers[kind].track.stop()
+        producers[kind] = null
+      }
+    }
+  }
 
 
   room.once("@open", ({ peers }) => {
     console.log(`${peers.length} peers in this room.`, peers);
+    onUpdate()
     peers.forEach((peer) => _peers.push(peer))
 
     room.on("@peerJoined", (obj) => {
@@ -61,7 +85,8 @@ module.exports = ({ server = `ws://localhost:2345`, onUpdate = () => {}}) => {
   return {
     room: room,
     peers: _peers,
-    broadcastVideo: broadcastVideo
+    // broadcastVideo: broadcastVideo,
+    updateBroadcast: updateBroadcast
   //  updateBroadcast
   }
 }
