@@ -15,7 +15,7 @@ function mainView (state, emit) {
     <body class="w-100 h-100 mw-100  near-white ${state.isBroadcasting?'bg-dark-green':'bg-dark-gray'}">
       <div class="pa2 flex">
         <button class="ma2 pointer" onclick=${() => emit('toggle broadcast')}> ${state.isBroadcasting? 'Stop broadcast' : 'Go live!'} </button>
-        <div class="f2 ma2"> ${state.broadcaster.peers.length} viewer connected </div>
+        <div class="f2 ma2"> ${state.broadcaster.peers.length} viewer(s) connected </div>
       </div>
       <div class="flex w-100 pa2">
         <div class="pa4 pt0 ba flex-auto">
