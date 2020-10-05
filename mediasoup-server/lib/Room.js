@@ -1,5 +1,7 @@
 const { Room } = require("protoo-server");
 
+const config = require('./../config.js');
+
 class ConfRoom {
   constructor(mediasoupRouter) {
     this._protooRoom = new Room();
@@ -135,13 +137,11 @@ class ConfRoom {
         const { producing, consuming } = request.data;
 
         const transport = await this._mediasoupRouter.createWebRtcTransport({
-          listenIps: [
-            { ip: "192.168.178.37" },
-          ],
+          listenIps: config.webRtcTransport.listenIps,
           appData: { producing, consuming }
         });
 
-        console.log('transport', transport.iceParameters, transport.iceCandidates)
+    //    console.log('transport', transport.iceParameters, transport.iceCandidates)
         // Store the WebRtcTransport into the protoo Peer data Object.
         peer.data.transports.set(transport.id, transport);
 

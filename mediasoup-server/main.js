@@ -6,67 +6,26 @@ var fs = require('fs');
 const { WebSocketServer } = require("protoo-server");
 const mediasoup = require("mediasoup");
 const ConfRoom = require("./lib/Room");
+const config = require('./config.js');
 
 (async () => {
-  var privateKey  = fs.readFileSync(__dirname + '/certs/privkey.pem', 'utf8')
-  var certificate = fs.readFileSync(__dirname +'/certs/fullchain.pem', 'utf8')
-  var portNumber = 8000
+  var privateKey  = fs.readFileSync(__dirname + config.sslKey, 'utf8')
+  var certificate = fs.readFileSync(__dirname + config.sslCert, 'utf8')
+  var portNumber = config.port
 
   var credentials = {
     key: privateKey,
     cert: certificate
   }
 
-  const worker = await mediasoup.createWorker({
-    rtcMinPort: 3000,
-    rtcMaxPort: 4000,
-    logLevel: "debug"
-  });
+  const worker = await mediasoup.createWorker(config.worker);
 
   worker.on("died", () => {
     console.log("mediasoup Worker died, exit..");
     process.exit(1);
   });
 
-  const router = await worker.createRouter({
-    mediaCodecs: [
-      {
-        kind: "audio",
-        name: "opus",
-        mimeType: "audio/opus",
-        clockRate: 48000,
-        channels: 2
-      },
-      // {
-      //   kind: "video",
-      //   name: "VP8",
-      //   mimeType: "video/VP8",
-      //   clockRate: 90000
-      // },
-      {
-			kind       : 'video',
-			mimeType   : 'video/H264',
-			clockRate  : 90000,
-			parameters :
-  			{
-  				'packetization-mode'      : 1,
-  				'level-asymmetry-allowed' : 1
-  			}
-      },
-      // use h.264 because VP8 doesnt work on safari
-      //   {
-      //   kind       : "video",
-      //   name       : "h264",
-      //   clockRate  : 90000,
-      //   parameters :
-      //   {
-      //     "packetization-mode"      : 1,
-      //     "profile-level-id"        : "42e01f",
-      //     "level-asymmetry-allowed" : 1
-      //   }
-      // }
-    ]
-  });
+  const router = await worker.createRouter(config.router);
 
   const room = new ConfRoom(router);
 
