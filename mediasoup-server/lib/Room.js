@@ -135,10 +135,13 @@ class ConfRoom {
         const { producing, consuming } = request.data;
 
         const transport = await this._mediasoupRouter.createWebRtcTransport({
-          listenIps: [{ ip: "127.0.0.1" }],
+          listenIps: [
+            { ip: "192.168.178.37" },
+          ],
           appData: { producing, consuming }
         });
 
+        console.log('transport', transport.iceParameters, transport.iceCandidates)
         // Store the WebRtcTransport into the protoo Peer data Object.
         peer.data.transports.set(transport.id, transport);
 

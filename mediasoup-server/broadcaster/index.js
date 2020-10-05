@@ -41,8 +41,10 @@ function mediaStore (state, emitter) {
   }
 
   state.isBroadcasting = false
+
+  //console.log(wo)
   state.broadcaster = createBroadcaster({
-    server: `wss://localhost:8000`,
+    server: `wss://${window.location.host}`,
     onUpdate: updateBroadcast
   })
 

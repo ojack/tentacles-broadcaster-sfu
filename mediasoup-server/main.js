@@ -19,7 +19,8 @@ const ConfRoom = require("./lib/Room");
 
   const worker = await mediasoup.createWorker({
     rtcMinPort: 3000,
-    rtcMaxPort: 4000
+    rtcMaxPort: 4000,
+    logLevel: "debug"
   });
 
   worker.on("died", () => {
