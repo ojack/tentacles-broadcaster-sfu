@@ -1,7 +1,7 @@
 module.exports = {
   port: 8000, // port where socket server and broadcaster will be hosted
-  sslKey: '/certs/privkey.pem',
-  sslCert: '/certs/fullchain.pem',
+  sslKey: '/etc/letsencrypt/live/mediasoup.tentacles.live/privkey.pem',
+  sslCert: '/etc/letsencrypt/live/mediasoup.tentacles.live/fullchain.pem',
   worker: {
     rtcMinPort: 3000,
     rtcMaxPort: 4000
