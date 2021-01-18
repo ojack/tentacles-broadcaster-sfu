@@ -11,7 +11,7 @@ module.exports = {
       {
         //ip: '127.0.0.1', // set to public IP
         // ip: "192.168.178.37" // vitalsigns
-        ip: 167.172.103.26 // tentacles / mediasoup
+        ip: "167.172.103.26" // tentacles / mediasoup
       }
     ]
   },
