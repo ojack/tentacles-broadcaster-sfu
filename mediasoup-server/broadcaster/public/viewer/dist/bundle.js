@@ -4,7 +4,9 @@ let hasStarted = false
 document.body.innerHTML = 'this an example viewer for the media soup broadcaster. click to start!'
 
 //const server = `wss://livelab.app:3499`
-const server = `wss://192.168.178.37:8000`
+// const server = `wss://192.168.178.37:8000`
+// const server = `wss://localhost:8000`
+const server = `wss://167.172.103.26:8000`
 
 window.onclick = () => {
   if(!hasStarted) {

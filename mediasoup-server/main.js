@@ -9,8 +9,8 @@ const ConfRoom = require("./lib/Room");
 const config = require('./config.js');
 
 (async () => {
-  var privateKey  = fs.readFileSync(__dirname + config.sslKey, 'utf8')
-  var certificate = fs.readFileSync(__dirname + config.sslCert, 'utf8')
+  var privateKey  = fs.readFileSync(config.sslKey, 'utf8')
+  var certificate = fs.readFileSync(config.sslCert, 'utf8')
   var portNumber = config.port
 
   var credentials = {
