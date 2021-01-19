@@ -42,9 +42,11 @@ function mediaStore (state, emitter) {
 
   state.isBroadcasting = false
 
-  //console.log(wo)
+  const serverURL = `wss://${window.location.host}/${window.location.search}`
+
+  console.log(' connecting to ', serverURL)
   state.broadcaster = createBroadcaster({
-    server: `wss://${window.location.host}`,
+    server: serverURL,
     onUpdate: updateBroadcast
   })
 

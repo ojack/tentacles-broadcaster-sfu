@@ -27,7 +27,8 @@ const config = require('./config.js');
 
   const router = await worker.createRouter(config.router);
 
-  const room = new ConfRoom(router);
+  let roomList = new Map()
+  //const room = new ConfRoom(router);
 
   // const httpServer = http.createServer();
   // await new Promise(resolve => {
@@ -50,13 +51,38 @@ const config = require('./config.js');
       info.origin
     );
 
-    room.handlePeerConnect({
-      // to be more and more strict
-      peerId: `p${String(Math.random()).slice(2)}`,
-      protooWebSocketTransport: accept()
-    });
+        // Parse WSS Query Paraemters
+     var queryString = info.request.url || '';
+     if(queryString.substr(0,1) === '/') { queryString = queryString.substr(1, queryString.length); }
+     const urlParams = new URLSearchParams(queryString);
+     const streamId = urlParams.get('stream') || 'test';
+     const peerId = urlParams.get('id') ||  `p${String(Math.random()).slice(2)}`;
+
+     // streamId is equivalent to roomId
+     if (roomList.has(streamId)) {
+     var room = roomList.get(streamId);
+     room.handlePeerConnect({
+       peerId: peerId,
+       protooWebSocketTransport: accept()
+     });
+           console.log("existing room stat", streamId, peerId, room.getStatus() );
+   } else {
+     var room = new ConfRoom(router);
+     roomList.set(streamId,room);
+     room.handlePeerConnect({
+       peerId: peerId,
+       protooWebSocketTransport: accept()
+     });
+           console.log("new stream stat", streamId, peerId, room.getStatus() );
+   }
+    //
+    // room.handlePeerConnect({
+    //   // to be more and more strict
+    //   peerId: `p${String(Math.random()).slice(2)}`,
+    //   protooWebSocketTransport: accept()
+    // });
   });
 
 //  console.log("websocket server started on http://127.0.0.1:2345");
-  setInterval(() => console.log("room stat", room.getStatus()), 1000 * 5);
+//  setInterval(() => console.log("room stat", room.getStatus()), 1000 * 5);
 })();

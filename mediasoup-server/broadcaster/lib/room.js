@@ -58,6 +58,8 @@ module.exports = class Room extends EventEmitter {
       .catch(console.error);
     await device.load({ routerRtpCapabilities });
 
+    console.log('DEVICE', device)
+
     await this._prepareSendTransport(device).catch(console.error);
     await this._prepareRecvTransport(device).catch(console.error);
 

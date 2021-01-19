@@ -1,7 +1,7 @@
 module.exports = {
   port: 8000, // port where socket server and broadcaster will be hosted
-  sslKey: '/certs/privkey.pem',
-  sslCert: '/certs/fullchain.pem',
+  sslKey: __dirname + '/certs/privkey.pem',
+  sslCert: __dirname + '/certs/fullchain.pem',
   worker: {
     rtcMinPort: 3000,
     rtcMaxPort: 4000
@@ -24,12 +24,25 @@ module.exports = {
         clockRate: 48000,
         channels: 2
       },
-      // {
-      //   kind: "video",
-      //   name: "VP8",
-      //   mimeType: "video/VP8",
-      //   clockRate: 90000
-      // },
+      {
+  			kind         : 'video',
+  			mimeType     : 'video/VP9',
+  			clockRate    : 90000,
+  			// rtcpFeedback :
+  			// [
+  			// 	{ type: 'nack' },
+  			// 	{ type: 'nack', parameter: 'pli' },
+  			// 	{ type: 'ccm', parameter: 'fir' },
+  			// 	{ type: 'goog-remb' },
+  			// 	{ type: 'transport-cc' }
+  			// ]
+  		},
+      {
+        kind: "video",
+        name: "VP8",
+        mimeType: "video/VP8",
+        clockRate: 90000
+      },
       {
 			kind       : 'video',
 			mimeType   : 'video/H264',
