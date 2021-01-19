@@ -4,7 +4,8 @@
   "description": "",
   "scripts": {
     "start": "node main.js",
-    "watch": "watchify broadcaster/index.js -o broadcaster/public/bundle.js -v"
+    "watch": "watchify broadcaster/index.js -o broadcaster/public/bundle.js -v",
+    "update": "cp -r ./../mediasoup-viewer-example/dist/. ./broadcaster/public/viewer"
   },
   "dependencies": {
     "express": "^4.17.1",

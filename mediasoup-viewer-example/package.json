@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "budo index.js:bundle.js --dir dist --open --live",
+    "build": "browserify index.js -o dist/bundle.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "ojack",

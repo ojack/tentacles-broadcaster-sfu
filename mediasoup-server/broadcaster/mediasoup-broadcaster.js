@@ -1,10 +1,13 @@
 const Room = require('./lib/room.js')
 
-module.exports = ({ server = `ws://localhost:2345`, onUpdate = () => {}}) => {
+module.exports = ({ server = `ws://localhost:2345`, onUpdate = () => {}, streamKey = "test"}) => {
   const room = new Room()
   const _peers = []
   const producers = { video: null, audio: null }
-  room.join(server)
+
+  const serverURL = `${server}/?stream=${streamKey}`
+  console.log('joining', serverURL)
+  room.join(serverURL)
 
   const broadcastAudio = async (track) => {
     room.sendAudio(track)

@@ -12,6 +12,7 @@ window.onload = () => {
     if(!hasStarted) {
         // create a video element and add it to the page
       const video = document.createElement('video')
+      video.className ="w-100 h-100"
       video.autoplay = true
       video.muted = true
       video.controls = true
