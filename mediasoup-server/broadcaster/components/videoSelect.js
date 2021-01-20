@@ -37,13 +37,17 @@ module.exports = class VideoSelect extends Component {
 
   load (el) {
     // update with initial devices
-    this.updateDeviceList(() => {
-      if (this.devices.length > 0) {
-        this.selectedDevice = this.devices[this.devices.length -
-          1]
-      }
-      this.getMedia()
-    })
+   navigator.mediaDevices.getUserMedia({video: true}).then(() => {
+     this.updateDeviceList(() => {
+       if (this.devices.length > 0) {
+         this.selectedDevice = this.devices[this.devices.length -
+           1]
+       }
+       this.getMedia()
+     })
+   }
+   )
+
   }
 
   applyConstraints (obj = {}) {

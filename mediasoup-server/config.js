@@ -1,5 +1,7 @@
 module.exports = {
   port: 8000, // port where socket server and broadcaster will be hosted
+  // sslKey: '/etc/letsencrypt/live/mediasoup.tentacles.live/privkey.pem',
+  // sslCert: '/etc/letsencrypt/live/mediasoup.tentacles.live/fullchain.pem',
   sslKey: __dirname + '/certs/privkey.pem',
   sslCert: __dirname + '/certs/fullchain.pem',
   worker: {
@@ -9,9 +11,9 @@ module.exports = {
   webRtcTransport: {
     listenIps: [
       {
-        ip: '127.0.0.1', // set to public IP
+         ip: '127.0.0.1', // set to public IP
         // ip: "192.168.178.37" // vitalsigns
-        // ip: "167.172.103.26" // tentacles / mediasoup
+      //   ip: "167.172.103.26" // tentacles / mediasoup
       }
     ]
   },

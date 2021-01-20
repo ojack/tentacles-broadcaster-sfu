@@ -92,12 +92,14 @@ module.exports = class AudioSelect extends Component {
 
   load (el) {
     // update with initial devices
-    this.updateDeviceList(() => {
-      if (this.devices.length > 0) {
-        this.selectedDevice = this.devices[this.devices.length -
-          1]
-      }
-      this.getMedia('audio')
+    navigator.mediaDevices.getUserMedia({audio: true}).then(() => {
+      this.updateDeviceList(() => {
+        if (this.devices.length > 0) {
+          this.selectedDevice = this.devices[this.devices.length -
+            1]
+        }
+        this.getMedia('audio')
+      })
     })
   }
 
@@ -220,6 +222,8 @@ module.exports = class AudioSelect extends Component {
 },{"./audioVis.js":3,"./ui-elements.js":4,"choo/component":92,"choo/html":93,"enumerate-devices":137}],3:[function(require,module,exports){
 var html = require('choo/html')
 var Component = require('choo/component')
+
+const AudioContext = window.AudioContext || window.webkitAudioContext
 
 module.exports = class AudioVis extends Component {
   constructor () {
@@ -434,13 +438,17 @@ module.exports = class VideoSelect extends Component {
 
   load (el) {
     // update with initial devices
-    this.updateDeviceList(() => {
-      if (this.devices.length > 0) {
-        this.selectedDevice = this.devices[this.devices.length -
-          1]
-      }
-      this.getMedia()
-    })
+   navigator.mediaDevices.getUserMedia({video: true}).then(() => {
+     this.updateDeviceList(() => {
+       if (this.devices.length > 0) {
+         this.selectedDevice = this.devices[this.devices.length -
+           1]
+       }
+       this.getMedia()
+     })
+   }
+   )
+
   }
 
   applyConstraints (obj = {}) {

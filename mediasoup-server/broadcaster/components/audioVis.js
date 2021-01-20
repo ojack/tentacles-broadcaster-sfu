@@ -1,6 +1,8 @@
 var html = require('choo/html')
 var Component = require('choo/component')
 
+const AudioContext = window.AudioContext || window.webkitAudioContext
+
 module.exports = class AudioVis extends Component {
   constructor () {
     super()

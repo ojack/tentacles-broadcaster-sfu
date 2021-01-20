@@ -45,12 +45,14 @@ module.exports = class AudioSelect extends Component {
 
   load (el) {
     // update with initial devices
-    this.updateDeviceList(() => {
-      if (this.devices.length > 0) {
-        this.selectedDevice = this.devices[this.devices.length -
-          1]
-      }
-      this.getMedia('audio')
+    navigator.mediaDevices.getUserMedia({audio: true}).then(() => {
+      this.updateDeviceList(() => {
+        if (this.devices.length > 0) {
+          this.selectedDevice = this.devices[this.devices.length -
+            1]
+        }
+        this.getMedia('audio')
+      })
     })
   }
 
