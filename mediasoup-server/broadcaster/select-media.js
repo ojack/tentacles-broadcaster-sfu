@@ -4,8 +4,12 @@ const VideoSelect = require('./components/videoSelect.js')
 
 
 module.exports = (state, emit) => {
-  return html`<div>
-    ${state.cache(VideoSelect, 'select-video').render({onChange: (track) => emit('selectMedia:updateTrack', 'video', track)})}
-    ${state.cache(AudioSelect, 'select-audio').render({onChange: (track) => emit('selectMedia:updateTrack', 'audio', track)})}
+  return html`<div class="flex flex-column flex-row-l">
+      <div class="pa4 mw6 w-100">
+        ${state.cache(VideoSelect, 'select-video').render({onChange: (track) => emit('selectMedia:updateTrack', 'video', track)})}
+      </div>
+      <div class="pa4 mw6 w-100">
+        ${state.cache(AudioSelect, 'select-audio').render({onChange: (track) => emit('selectMedia:updateTrack', 'audio', track)})}
+      </div>
   </div>`
 }

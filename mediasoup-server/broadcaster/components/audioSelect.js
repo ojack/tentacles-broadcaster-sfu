@@ -2,28 +2,8 @@ const AudioVis = require('./audioVis.js')
 const Component = require('choo/component')
 const html = require('choo/html')
 const enumerateDevices = require('enumerate-devices')
+const { dropdown, toggle, expandable } = require('./ui-elements.js')
 
-const dropdown = (options, selected) => html`
-  ${options.map(
-  opt => html`
-    <option class="dark-gray" value=${opt.value} ${opt.value === selected
-    ? 'selected'
-    : ''}>${opt.label}</option>
-  `
-)}
-`
-
-const toggle = (val, onChange) => html`
-  <input type="checkbox" checked=${val} onchange=${onChange} />
-`
-
-const expandable = (isOpen, content, maxHeight = '300px') => html`
-  <div class="overflow-hidden" style="transition: max-height 1s;max-height:${isOpen
-  ? maxHeight
-  : 0}">
-    ${content}
-  </div>
-`
 const constraintNames = {
   echoCancellation: 'echo cancellation',
   autoGainControl: 'auto gain',
@@ -135,18 +115,32 @@ module.exports = class AudioSelect extends Component {
     this.onChange = onChange
   //  this.parentOpts = opts
 
-    const audioSelect = html`<select name="audio" class="w-100 pa2 white ttu ba b--white pointer" style="background:none" onchange=${e => {
-      this.selectedDevice = this.devices.filter( device => device.deviceId === e.target.value)[0]
-      this.isActive = this.selectedDevice.deviceId === 'false' ? this.isActive = false : this.isActive = true
-      this.getMedia()
-    }}>${dropdown(
-          this.devices.map((device, index) => ({
-            value: device.deviceId,
-            label: device.label
-          })),
-          this.selectedDevice.deviceId
-        )}
-    </select>`
+    const audioSelect = dropdown(
+      this.devices.map((device, index) => ({
+        value: device.deviceId,
+        label: device.label
+      })),
+      this.selectedDevice.deviceId,
+      e => {
+        this.selectedDevice = this.devices.filter( device => device.deviceId === e.target.value)[0]
+        this.isActive = this.selectedDevice.deviceId === 'false' ? this.isActive = false : this.isActive = true
+        this.getMedia()
+      }
+    )
+
+
+    // html`<select name="audio" class="w-100 pa2 white ttu ba b--white pointer" style="background:none" onchange=${e => {
+    //   this.selectedDevice = this.devices.filter( device => device.deviceId === e.target.value)[0]
+    //   this.isActive = this.selectedDevice.deviceId === 'false' ? this.isActive = false : this.isActive = true
+    //   this.getMedia()
+    // }}>${dropdown(
+    //       this.devices.map((device, index) => ({
+    //         value: device.deviceId,
+    //         label: device.label
+    //       })),
+    //       this.selectedDevice.deviceId
+    //     )}
+    // </select>`
 
     const audioSettings = Object.keys(this.constraints).map(
       constraint => html`<div class="flex w-100 justify-between">
@@ -159,13 +153,13 @@ module.exports = class AudioSelect extends Component {
     </div>`
     )
 
-    return html`<div class="flex flex-column mw6 w-100 mt4">
-      <div>Audio input</div>
+    return html`<div class="flex flex-column w-100">
+      <div>Select audio</div>
       <div class="">${audioSelect}</div>
       ${expandable(
         this.isActive,
         html`<div class="mt4">Audio meter</div>
-            <div class="ba b--white">
+            <div class="ba b--black">
             ${this.audioVis.render(this.stream, this)}
             </div>
             <div class="mt4 flex flex-column">

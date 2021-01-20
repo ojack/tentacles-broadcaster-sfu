@@ -2,28 +2,8 @@ const Component = require('choo/component')
 const Video = require('./VideoObj.js')
 const html = require('choo/html')
 const enumerateDevices = require('enumerate-devices')
+const { dropdown, toggle, expandable } = require('./ui-elements.js')
 
-const dropdown = (options, selected) => html`
-  ${options.map(
-  opt => html`
-    <option class="dark-gray" value=${opt.value} ${opt.value === selected
-    ? 'selected'
-    : ''}>${opt.label}</option>
-  `
-)}
-`
-
-const toggle = (val, onChange) => html`
-  <input type="checkbox" checked=${val} onchange=${onChange} />
-`
-
-const expandable = (isOpen, content, maxHeight = '300px') => html`
-  <div class="overflow-hidden" style="transition: max-height 1s;max-height:${isOpen
-  ? maxHeight
-  : 0}">
-    ${content}
-  </div>
-`
 
 module.exports = class VideoSelect extends Component {
   constructor (opts) {
@@ -158,18 +138,30 @@ module.exports = class VideoSelect extends Component {
     this.onChange = onChange
   //  this.parentOpts = opts
 
-    const videoSelect = html`<select name="video-select" class="w-100 pa2 white ttu ba b--white pointer" style="background:none" onchange=${e => {
-      this.selectedDevice = this.devices.filter( device => device.deviceId === e.target.value)[0]
-      this.isActive = this.selectedDevice.deviceId === 'false' ? this.isActive = false : this.isActive = true
-      this.getMedia()
-    }}>${dropdown(
-          this.devices.map((device, index) => ({
-            value: device.deviceId,
-            label: device.label
-          })),
-          this.selectedDevice.deviceId
-        )}
-    </select>`
+   const videoSelect = dropdown(  this.devices.map((device, index) => ({
+       value: device.deviceId,
+       label: device.label
+     })),
+     this.selectedDevice.deviceId,
+     e => {
+       this.selectedDevice = this.devices.filter( device => device.deviceId === e.target.value)[0]
+       this.isActive = this.selectedDevice.deviceId === 'false' ? this.isActive = false : this.isActive = true
+       this.getMedia()
+     }
+   )
+
+    // const videoSelect = html`<select name="video-select" class="w-100 pa2 white ttu ba b--white pointer" style="background:none" onchange=${e => {
+    //   this.selectedDevice = this.devices.filter( device => device.deviceId === e.target.value)[0]
+    //   this.isActive = this.selectedDevice.deviceId === 'false' ? this.isActive = false : this.isActive = true
+    //   this.getMedia()
+    // }}>${dropdown(
+    //       this.devices.map((device, index) => ({
+    //         value: device.deviceId,
+    //         label: device.label
+    //       })),
+    //       this.selectedDevice.deviceId
+    //     )}
+    // </select>`
 
     let vid = this.previewVideo.render(this.stream, {
       objectPosition: 'center'
@@ -179,7 +171,7 @@ module.exports = class VideoSelect extends Component {
       constraint => html`
   <div class="flex-auto w3 mt2">
   <div>${constraint === 'frameRate' ? 'fps' : constraint}</div>
-  <input type="text" value=${this.constraints[constraint]} class="pa2 ba b--white white w-100" style="background:none" onkeyup=${e => {
+  <input type="text" value=${this.constraints[constraint]} class="pa2 ba b--black black w-100" style="background:none" onkeyup=${e => {
     if (parseInt(e.srcElement.value)) {
       this.applyConstraints({
         [constraint]: parseInt(e.srcElement.value)
@@ -193,14 +185,14 @@ module.exports = class VideoSelect extends Component {
       ? `${this.trackInfo.width}x${this.trackInfo.height}@${this.trackInfo.frameRate}fps`
       : ''
 
-    return html`<div class="flex flex-column mw6 w-100">
-      <div>Video input</div>
+    return html`<div class="flex flex-column w-100">
+      <div>Select video</div>
       <div>${videoSelect}</div>
       ${expandable(
       this.isActive,
       html`
         <div class="mt4 flex justify-between"><div>Video preview</div><div>${vidInfo}</div></div>
-        <div class="w-100 h4 h5-ns ba b--white">${vid}</div>
+        <div class="w-100 h4 h5-ns ba b--black">${vid}</div>
         <div class="flex flex-wrap mt4">${videoSettings} </div>`,
       '500px'
     )}

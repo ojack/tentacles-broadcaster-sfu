@@ -103,7 +103,8 @@ module.exports = class AudioVis extends Component {
     for(var i = 0; i < bufferLength; i++) {
             barHeight = this.dataArray[i] + 10;
         //    if(barHeight > 10) console.log(barHeight)
-            this.ctx.fillStyle = 'rgb(' + (barHeight+100) + ',250,250)';
+        //    this.ctx.fillStyle = 'rgb(' + (barHeight+100) + ',250,250)';
+              this.ctx.fillStyle = 'rgb(0, 0, 0)';
             this.ctx.fillRect(x,this.canvas.height-barHeight/2,barWidth,barHeight);
 
             x += barWidth + 1;
@@ -112,8 +113,9 @@ module.exports = class AudioVis extends Component {
 
   createElement(stream, parent) {
 
-    this.canvas = html`<canvas></canvas>`
+    this.canvas = html`<canvas class="w-100 h-100"></canvas>`
     this.canvas.height = 100
+    this.canvas.width = 200
 
     this.stream = stream
     this.parent = parent
@@ -121,12 +123,16 @@ module.exports = class AudioVis extends Component {
     this.isActive = false
 
     this.details = html`<div></div>`
-    this.audioEl = html`<audio controls class="h2"></audio>`
+    this.audioEl = html`<audio controls class="h2 w-100"></audio>`
 
-    return html`<div class="relative">${this.canvas}
-          ${this.audioEl}
-        <div class="absolute f7 silver top-0 right-0 ttn" style="width:12rem">
+    return html`<div class="relative flex h4" style="height:10rem">
+        <div class="w-60 h-100">
+          ${this.canvas}
+
+        </div>
+        <div class="absolute f7 top-0 right-0 ttn ma1 o-80" style="width:10rem">
           ${this.details}
+          ${this.audioEl}
         </div>
       </div>`
   }
