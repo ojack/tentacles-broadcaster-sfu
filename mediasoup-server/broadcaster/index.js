@@ -12,11 +12,11 @@ app.route('/', mainView)
 app.mount('body')
 
 function mainView (state, emit) {
-  const viewerURL =  `${window.location.origin}/viewer/?stream=${state.broadcastTracks.streamKey}`
+  const viewerURL =  `${window.location.origin}/viewer/?stream=${state.broadcast.streamKey}`
   return html`
-    <body class="w-100 h-100 mw-100 avenir white ${state.isBroadcasting?'bg-dark-green':'bg-dark-gray'}">
+    <body class="w-100 h-100 mw-100 avenir white ${state.broadcast.isLive?'bg-dark-green':'bg-dark-gray'}">
       <div class="pa2 flex">
-        <button class="ma2 pointer" onclick=${() => emit('toggle broadcast')}> ${state.isBroadcasting? 'Stop broadcast' : 'Go live!'} </button>
+        <button class="ma2 pointer" onclick=${() => emit('toggle broadcast')}> ${state.broadcast.isLive? 'Stop broadcast' : 'Go live!'} </button>
         <div class="f2 ma2"> ${state.broadcaster.peers.length} viewer(s) connected </div>
       </div>
       <div  class="white pl2 f6"><a target="_blank" class="dim white" href=${viewerURL}>${viewerURL}</a></div>
@@ -43,13 +43,15 @@ function mediaStore (state, emitter) {
   const urlParams = new URLSearchParams(window.location.search);
   const streamKey = urlParams.get('stream')
 
-  state.broadcastTracks = {
-    video: null,
-    audio: null,
-    streamKey: streamKey === "null" ? 'test' : streamKey
+  state.broadcast = {
+    streamKey:  streamKey == null ? 'test' : streamKey,
+    isLive: false
   }
 
-  state.isBroadcasting = false
+  state.selectMedia = {
+      video: null,
+      audio: null
+    }
 
 
 
@@ -62,7 +64,7 @@ function mediaStore (state, emitter) {
   state.broadcaster = createBroadcaster({
     server: serverURL,
     onUpdate: updateBroadcast,
-    streamKey: state.broadcastTracks.streamKey
+    streamKey: state.broadcast.streamKey
   })
 
   emitter.on('toggle broadcast', function () {
@@ -74,13 +76,20 @@ function mediaStore (state, emitter) {
         //  state.broadcaster.broadcastVideo(state.preview.tracks.video)
     //  }
     // }
-    state.isBroadcasting =! state.isBroadcasting
-    if(!state.isBroadcasting) {
+    state.broadcast.isLive =! state.broadcast.isLive
+    if(!state.broadcast.isLive) {
       state.broadcaster.updateBroadcast({ audio: null, video: null})
     } else {
-      state.broadcaster.updateBroadcast(state.preview.tracks)
+      state.broadcaster.updateBroadcast(state.selectMedia)
     }
     emitter.emit('render')
+  })
+
+  emitter.on('selectMedia:updateTrack', (kind, value) => {
+    state.selectMedia[kind] = value
+    if(state.broadcast.isLive) {
+      state.broadcaster.updateBroadcast(state.selectMedia)
+    }
   })
 
   emitter.on('updateMedia', () => {

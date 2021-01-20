@@ -104,6 +104,7 @@ module.exports = class AudioSelect extends Component {
             .filter(track => track.kind == 'audio')[0]
           this.stream = stream
           this.showTrackInfo(this.track)
+          this.onChange(this.track)
           this.rerender()
         })
         .catch(err => {
@@ -112,6 +113,7 @@ module.exports = class AudioSelect extends Component {
     } else {
       this.track = null
       this.stream = null
+      this.onChange(this.track)
       this.rerender()
     }
   }
@@ -129,8 +131,9 @@ module.exports = class AudioSelect extends Component {
     )
   }
 
-  createElement (opts) {
-    this.parentOpts = opts
+  createElement ({ onChange = () => console.log("no change handler for media selector")}) {
+    this.onChange = onChange
+  //  this.parentOpts = opts
 
     const audioSelect = html`<select name="audio" class="w-100 pa2 white ttu ba b--white pointer" style="background:none" onchange=${e => {
       this.selectedDevice = this.devices.filter( device => device.deviceId === e.target.value)[0]
