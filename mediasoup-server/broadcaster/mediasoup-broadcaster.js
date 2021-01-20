@@ -21,7 +21,7 @@ module.exports = ({ server = `ws://localhost:2345`, onUpdate = () => {}, streamK
 
   const updateMedia = async (track, kind) => {
     if(track !== null) {
-      console.log(track, producers[kind])
+      console.log('updating tracks', track, producers[kind])
       if(producers[kind] === null) {
         let producer
         if(kind === 'video') {

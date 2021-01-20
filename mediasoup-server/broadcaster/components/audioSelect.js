@@ -52,7 +52,7 @@ module.exports = class AudioSelect extends Component {
         .then(devices => {
           this.devices = devices.filter(elem => elem.kind == 'audioinput')
           this.devices.push({ label: 'no audio', deviceId: 'false' })
-          console.log('getting devices!', this.devices)
+        //  console.log('getting devices!', this.devices)
           callback()
         })
         .catch(err => this.log('error', err))
@@ -95,7 +95,7 @@ module.exports = class AudioSelect extends Component {
           this.track.stop()
           this.track = null
         }
-        console.log('getting media', initialConstraints)
+      //  console.log('getting media', initialConstraints)
       navigator.mediaDevices
         .getUserMedia(initialConstraints)
         .then(stream => {

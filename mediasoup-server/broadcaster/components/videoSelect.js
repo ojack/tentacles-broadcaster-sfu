@@ -44,7 +44,7 @@ module.exports = class VideoSelect extends Component {
           this.devices = devices.filter(elem => elem.kind == 'videoinput')
           this.devices.push({ label: 'screen capture', deviceId: 'screen' })
           this.devices.push({ label: 'no video', deviceId: 'false' })
-          console.log('getting devices!', this.devices)
+        //  console.log('getting devices!', this.devices)
           callback()
         })
         .catch(err => this.log('error', err))
@@ -113,7 +113,7 @@ module.exports = class VideoSelect extends Component {
           this.track.stop()
           this.track = null
         }
-        console.log('getting media', initialConstraints)
+    //    console.log('getting media', initialConstraints)
       if(this.selectedDevice.deviceId === 'screen') {
         this.getScreen()
       } else {

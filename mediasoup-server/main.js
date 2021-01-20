@@ -7,6 +7,9 @@ const { WebSocketServer } = require("protoo-server");
 const mediasoup = require("mediasoup");
 const ConfRoom = require("./lib/Room");
 const config = require('./config.js');
+const QuickLRU = require('quick-lru');
+
+//const lru = new QuickLRU({maxSize: 1000});
 
 (async () => {
   var privateKey  = fs.readFileSync(config.sslKey, 'utf8')
@@ -27,7 +30,7 @@ const config = require('./config.js');
 
   const router = await worker.createRouter(config.router);
 
-  let roomList = new Map()
+  let roomList = new QuickLRU({ maxSize: 1000 })
   //const room = new ConfRoom(router);
 
   // const httpServer = http.createServer();

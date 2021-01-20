@@ -35,7 +35,7 @@ module.exports = class AudioVis extends Component {
   }
 
   updateStream() {
-    console.log('UPDATING stream', this.stream)
+  //  console.log('UPDATING stream', this.stream)
       this.updateSettings(this.parent)
       if(this.source) this.source.disconnect()
       if(this.stream !== null) {
@@ -45,7 +45,7 @@ module.exports = class AudioVis extends Component {
           // const stream = new MediaStream([track])
           // this.source = this.audioCtx.createMediaStreamSource(stream)
           this.source = this.audioCtx.createMediaStreamSource(this.stream)
-          console.log('setting stream', this.stream, this.analyser, this.source)
+      //    console.log('setting stream', this.stream, this.analyser, this.source)
           this.source.connect(this.analyser)
         //  this.stream = stream
           // debug
@@ -60,18 +60,18 @@ module.exports = class AudioVis extends Component {
     let details = null
     this.details.innerHTML = ''
     if(this.stream !== null){
-      console.log('selected', parent.selectedDevice)
+    //  console.log('selected', parent.selectedDevice)
       const track = this.stream.getAudioTracks()[0]
       if(track) {
         const settings = track.getSettings()
         const constraints = track.getConstraints()
-        console.log('track', track, 'settings', settings, constraints)
+      //  console.log('track', track, 'settings', settings, constraints)
 
         const keys = ['echoCancellation', 'autoGainControl', 'noiseSuppression', 'channelCount', 'latency', 'sampleRate', 'sampleSize']
         details = html`<div>${keys.map((key) => {
           let color = ""
           if(key in constraints && constraints[key] !== settings[key] && key !== 'latency') color = "red"
-          console.log( constraints[key], settings[key], color)
+        //  console.log( constraints[key], settings[key], color)
           return html`<div
           class="${color}">${key} : ${settings[key]}</div>`
         })}</div>`

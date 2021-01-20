@@ -2,7 +2,6 @@ var html = require('choo/html')
 var devtools = require('choo-devtools')
 var choo = require('choo')
 const createBroadcaster = require('./mediasoup-broadcaster.js')
-const MediaPreview = require('./mediaPreview.js')
 const selectMedia = require('./select-media.js')
 
 var app = choo()
@@ -22,9 +21,7 @@ function mainView (state, emit) {
       <div  class="white pl2 f6"><a target="_blank" class="dim white" href=${viewerURL}>${viewerURL}</a></div>
       <div class="flex w-100 pa2">
         <div class="pa4 pt0 ba f6 flex-auto">
-
           ${selectMedia(state, emit)}
-          ${state.cache(MediaPreview, 'media-preview').render()}
         </div>
       </div>
     </body>
