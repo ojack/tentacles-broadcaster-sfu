@@ -4,12 +4,14 @@
   "description": "",
   "scripts": {
     "start": "node main.js",
-    "watch": "watchify broadcaster/index.js -o broadcaster/public/bundle.js -v"
+    "watch": "watchify broadcaster/index.js -o broadcaster/public/bundle.js -v",
+    "update": "cp -r ./../mediasoup-viewer-example/dist/. ./broadcaster/public/viewer"
   },
   "dependencies": {
     "express": "^4.17.1",
     "mediasoup": "^3.1.1",
-    "protoo-server": "^4.0.3"
+    "protoo-server": "^4.0.3",
+    "quick-lru": "5.1.0"
   },
   "devDependencies": {
     "nodemon": "^1.19.1",

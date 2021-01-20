@@ -9,9 +9,9 @@ module.exports = {
   webRtcTransport: {
     listenIps: [
       {
-        ip: '127.0.0.1', // set to public IP
+        // ip: '127.0.0.1', // set to public IP
         // ip: "192.168.178.37" // vitalsigns
-        // ip: "167.172.103.26" // tentacles / mediasoup
+        ip: "167.172.103.26" // tentacles / mediasoup
       }
     ]
   },
@@ -24,12 +24,25 @@ module.exports = {
         clockRate: 48000,
         channels: 2
       },
-      // {
-      //   kind: "video",
-      //   name: "VP8",
-      //   mimeType: "video/VP8",
-      //   clockRate: 90000
-      // },
+      {
+  			kind         : 'video',
+  			mimeType     : 'video/VP9',
+  			clockRate    : 90000,
+  			// rtcpFeedback :
+  			// [
+  			// 	{ type: 'nack' },
+  			// 	{ type: 'nack', parameter: 'pli' },
+  			// 	{ type: 'ccm', parameter: 'fir' },
+  			// 	{ type: 'goog-remb' },
+  			// 	{ type: 'transport-cc' }
+  			// ]
+  		},
+      {
+        kind: "video",
+        name: "VP8",
+        mimeType: "video/VP8",
+        clockRate: 90000
+      },
       {
 			kind       : 'video',
 			mimeType   : 'video/H264',
