@@ -1,5 +1,5 @@
 const Component = require('choo/component')
-const Video = require('./VideoObj.js')
+const Video = require('./video-container.js')
 const html = require('choo/html')
 const enumerateDevices = require('enumerate-devices')
 const { dropdown, toggle, expandable } = require('./ui-elements.js')

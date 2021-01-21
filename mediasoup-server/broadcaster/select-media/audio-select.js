@@ -1,4 +1,4 @@
-const AudioVis = require('./audioVis.js')
+const AudioVis = require('./audio-vis.js')
 const Component = require('choo/component')
 const html = require('choo/html')
 const enumerateDevices = require('enumerate-devices')

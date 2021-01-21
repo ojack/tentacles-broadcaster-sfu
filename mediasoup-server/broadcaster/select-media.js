@@ -1,8 +1,6 @@
 const html = require('choo/html')
-const AudioSelect = require('./components/audioSelect.js')
-const VideoSelect = require('./components/videoSelect.js')
-
-
+const { AudioSelect, VideoSelect } = require('./select-media/index.js')
+console.log('AUDIO SELECT', AudioSelect)
 module.exports = (state, emit) => {
   return html`<div class="flex flex-column flex-row-l">
       <div class="pa4 mw6 w-100">
