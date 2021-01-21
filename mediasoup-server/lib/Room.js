@@ -1,9 +1,10 @@
 const { Room } = require("protoo-server");
 
-const config = require('./../config.js');
+//const config = require('./../config.js');
 
 class ConfRoom {
-  constructor(mediasoupRouter) {
+  constructor(mediasoupRouter, config) {
+    this.config = config
     this._protooRoom = new Room();
     this._mediasoupRouter = mediasoupRouter;
   }
@@ -137,7 +138,7 @@ class ConfRoom {
         const { producing, consuming } = request.data;
 
         const transport = await this._mediasoupRouter.createWebRtcTransport({
-          listenIps: config.webRtcTransport.listenIps,
+          listenIps: this.config.webRtcTransport.listenIps,
           appData: { producing, consuming }
         });
 

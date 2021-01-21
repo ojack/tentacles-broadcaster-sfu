@@ -72,7 +72,7 @@ const QuickLRU = require('quick-lru');
      });
            console.log("existing room stat", streamId, peerId, room.getStatus() );
    } else {
-     var room = new ConfRoom(router);
+     var room = new ConfRoom(router, config);
      roomList.set(streamId,room);
      room.handlePeerConnect({
        peerId: peerId,
