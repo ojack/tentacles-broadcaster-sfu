@@ -23,6 +23,6 @@ npm i
 npm start
 ```
 
-Websocket server and broadcaster run on `https://localhost:8000`. Change main.js to update port and ssl certificate location.
+Websocket server and broadcaster run on `https://localhost:8000`. Change config.js to update port and ssl certificate location.
 
 Media server uses ports 3000-4000.

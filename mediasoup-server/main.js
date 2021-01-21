@@ -6,8 +6,10 @@ var fs = require('fs');
 const { WebSocketServer } = require("protoo-server");
 const mediasoup = require("mediasoup");
 const ConfRoom = require("./lib/Room");
-const config = require('./config.js');
+const config = process.env.NODE_ENV === 'production' ? require('./config.tentacles.js') : require('./config.js');
 const QuickLRU = require('quick-lru');
+
+
 
 //const lru = new QuickLRU({maxSize: 1000});
 
