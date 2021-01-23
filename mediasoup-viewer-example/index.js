@@ -7,6 +7,8 @@ window.onload = () => {
   // const server = `wss://192.168.178.37:8000`
   //const server = `wss://localhost:8000/${window.location.search}`
 
+  //const server = `wss://${window.location.hostname}:8000/${window.location.search}`
+
   const server = `wss://${window.location.hostname}:8000/${window.location.search}`
   //window.onclick = () => {
     if(!hasStarted) {

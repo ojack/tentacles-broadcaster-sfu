@@ -12,7 +12,7 @@ module.exports = class Room extends EventEmitter {
   }
 
   join(server = `ws://localhost:2345`) {
-    console.warn("room.join()");
+  //  console.warn("room.join()");
     const wsTransport = new WebSocketTransport(server);
 
     this.peer = new Peer(wsTransport);
@@ -25,31 +25,31 @@ module.exports = class Room extends EventEmitter {
   }
 
   async sendAudio(track) {
-    console.warn("room.sendAudio()");
+    //console.warn("room.sendAudio()");
     const audioProducer = await this.sendTransport.produce({
       track
     });
     audioProducer.on("trackended", async () => {
-      console.warn("producer.close() by trackended");
+    //  console.warn("producer.close() by trackended");
       await this._closeProducer(audioProducer);
     });
     return audioProducer;
   }
 
   async sendVideo(track) {
-    console.warn("room.sendVideo()");
+//    console.warn("room.sendVideo()");
     const videoProducer = await this.sendTransport.produce({
       track
     });
     videoProducer.on("trackended", async () => {
-      console.warn("producer.close() by trackended");
+  //    console.warn("producer.close() by trackended");
       await this._closeProducer(videoProducer);
     });
     return videoProducer;
   }
 
   async onPeerOpen() {
-    console.warn("room.peer:open");
+  //  console.warn("room.peer:open");
     const device = new Device();
 
     const routerRtpCapabilities = await this.peer
@@ -80,7 +80,7 @@ module.exports = class Room extends EventEmitter {
     this.sendTransport.on(
       "connect",
       ({ dtlsParameters }, callback, errback) => {
-        console.warn("room.sendTransport:connect");
+      //  console.warn("room.sendTransport:connect");
         this.peer
           .request("connectWebRtcTransport", {
             transportId: this.sendTransport.id,
@@ -93,7 +93,7 @@ module.exports = class Room extends EventEmitter {
     this.sendTransport.on(
       "produce",
       async ({ kind, rtpParameters, appData }, callback, errback) => {
-        console.warn("room.sendTransport:produce");
+      //  console.warn("room.sendTransport:produce");
         try {
           const { id } = await this.peer.request("produce", {
             transportId: this.sendTransport.id,
@@ -123,7 +123,7 @@ module.exports = class Room extends EventEmitter {
     this.recvTransport.on(
       "connect",
       ({ dtlsParameters }, callback, errback) => {
-        console.warn("room.recvTransport:connect");
+      //  console.warn("room.recvTransport:connect");
         this.peer
           .request("connectWebRtcTransport", {
             transportId: this.recvTransport.id,
@@ -144,7 +144,7 @@ module.exports = class Room extends EventEmitter {
   }
 
   onPeerRequest(req, resolve, reject) {
-    console.warn("room.peer:request", req.method);
+  //  console.warn("room.peer:request", req.method);
     switch (req.method) {
       // if you decline this offer, will not request `newConsumer`
       case "newConsumerOffer": {
@@ -174,7 +174,7 @@ module.exports = class Room extends EventEmitter {
   }
 
   onPeerNotification(notification) {
-    console.warn("room.peer:notification", notification);
+  //  console.warn("room.peer:notification", notification);
     this.emit("@" + notification.method, notification.data);
   }
 }

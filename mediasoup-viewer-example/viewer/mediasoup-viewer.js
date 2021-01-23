@@ -1,93 +1,110 @@
 const Room = require('./room.js')
+const EventEmitter = require('events')
 
-module.exports = ({ videoEl, server = `ws://localhost:2345`}) => {
-  const room = new Room()
-  room.join(server)
+module.exports = class Viewer extends EventEmitter{
+  constructor ({ videoEl, server = `ws://localhost:2345`, streamKey = "test"}) {
+    super()
+    this.room = new Room()
+    this.tracks = { audio: null, video: null }
+    this.isActive = false
 
-  if(!videoEl) {
-    videoEl = document.createElement('video')
-    videoEl.autoplay = true
-    document.body.appendChild(videoEl)
+    const _server = `${server}/?stream=${streamKey}`
+    console.log('connecting to', _server)
+    this.room.join(_server)
+
+    if(!videoEl) {
+      videoEl = document.createElement('video')
+      videoEl.autoplay = true
+      document.body.appendChild(videoEl)
+    }
+    this.video = videoEl
+
+
+    this.room.on("@consumer", async consumer => {
+      const {
+        id,
+        appData: { peerId },
+        track
+      } = consumer;
+    //  console.log("receive consumer", consumer);
+      //
+      // const el = createMediaEl(track, peerId, id);
+      // document.body.append(el)
+      this.addTrack(track, peerId, id)
+    });
+
+    this.room.on("@consumerClosed", (consumer) => {
+      console.log(consumer)
+      console.log(consumer.consumerId)
+      this.removeTrack(consumer.consumerId)
+      //removeMediaEl(document.body, "data-search-id", consumerId);
+    });
+
+    this.room.on("@producerClosed", ({ producerId }) => {
+      console.log('producer closed')
+    //  removeMediaEl(localTracks, "data-search-id", producerId);
+    });
+
+    this.room.on("@peerClosed", ({ peerId }) => {
+    //  removeMediaEl(remoteTracks, "data-peer-id", peerId);
+    });
   }
-  const video = videoEl
 
-  const tracks = { audio: null, video: null }
-
-  room.on("@consumer", async consumer => {
-    const {
-      id,
-      appData: { peerId },
-      track
-    } = consumer;
-    console.log("receive consumer", consumer);
-    //
-    // const el = createMediaEl(track, peerId, id);
-    // document.body.append(el)
-    addTrack(track, peerId, id)
-  });
-
-  room.on("@consumerClosed", (consumer) => {
-    console.log(consumer)
-    console.log(consumer.consumerId)
-    removeTrack(consumer.consumerId)
-    //removeMediaEl(document.body, "data-search-id", consumerId);
-  });
-
-  room.on("@producerClosed", ({ producerId }) => {
-    console.log('producer closed')
-  //  removeMediaEl(localTracks, "data-search-id", producerId);
-  });
-
-  room.on("@peerClosed", ({ peerId }) => {
-  //  removeMediaEl(remoteTracks, "data-peer-id", peerId);
-  });
-
-  function addTrack(track, peerId, consumerId) {
-    if(tracks[track.kind] !== null) {
+  addTrack(track, peerId, consumerId) {
+    if(this.tracks[track.kind] !== null) {
       // remove track
     }
-    tracks[track.kind] = {
+    this.tracks[track.kind] = {
       track: track,
       peerId: peerId,
       consumerId: consumerId
     }
-    updateStream()
+    this.updateStream()
   }
 
-  function updateStream() {
-    console.log('updating stream', tracks)
+   updateStream() {
+  //  console.log('updating stream', tracks)
     const stream = new MediaStream()
-    if(tracks.audio !== null) stream.addTrack(tracks.audio.track)
-    if(tracks.video !== null) stream.addTrack(tracks.video.track)
-    video.srcObject = stream
+    if(this.tracks.audio !== null) stream.addTrack(this.tracks.audio.track)
+    if(this.tracks.video !== null) stream.addTrack(this.tracks.video.track)
+    this.video.srcObject = stream
+    this.isActive = true
+    if(this.tracks.audio === null && this.tracks.video === null) this.isActive = false
+  //  console.log('active', isActive)
+  //  onUpdate(tracks)
+    this.emit('update', this.tracks)
   }
 
-  function removeTrack(id) {
-    console.log('removing tracks', id, tracks)
-    if(tracks.audio !== null && tracks.audio.consumerId === id) {
-      tracks.audio = null
+  removeTrack(id) {
+  //  console.log('removing tracks', id, tracks)
+    if(this.tracks.audio !== null && this.tracks.audio.consumerId === id) {
+      this.tracks.audio = null
     }
-    if(tracks.video !== null && tracks.video.consumerId === id) {
-      tracks.video = null
+    if(this.tracks.video !== null && this.tracks.video.consumerId === id) {
+      this.tracks.video = null
     }
-    updateStream()
-  }
-
-
-  function createMediaEl(track, peerId, searchId) {
-    const el = document.createElement(track.kind);
-    el.srcObject = new MediaStream([track]);
-    el.autoplay = true
-    el.setAttribute("data-peer-id", peerId);
-    el.setAttribute("data-search-id", searchId);
-    el.playsInline = true;
-  //  el.play().catch(console.error);
-    return el;
-  }
-
-  return {
-    room: room,
-    tracks: tracks,
-    server: server
+    this.updateStream()
   }
 }
+
+// ({ videoEl, server = `ws://localhost:2345`, streamKey = "test", onUpdate = () => {}}) => {
+//
+//
+//   function createMediaEl(track, peerId, searchId) {
+//     const el = document.createElement(track.kind);
+//     el.srcObject = new MediaStream([track]);
+//     el.autoplay = true
+//     el.setAttribute("data-peer-id", peerId);
+//     el.setAttribute("data-search-id", searchId);
+//     el.playsInline = true;
+//   //  el.play().catch(console.error);
+//     return el;
+//   }
+//
+//   return {
+//     this.room: this.room,
+//     tracks: tracks,
+//     server: server,
+//     isActive: isActive
+//   }
+// }
