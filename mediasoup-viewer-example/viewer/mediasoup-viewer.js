@@ -14,11 +14,15 @@ module.exports = class Viewer extends EventEmitter{
 
     if(!videoEl) {
       videoEl = document.createElement('video')
-      videoEl.autoplay = true
       document.body.appendChild(videoEl)
     }
     this.video = videoEl
+    this.video.autoplay = true
+    this.video.muted = true
 
+    this.video.addEventListener('canplay', (event) => {
+  console.log('Video can start, but not sure it will play through.');
+});
 
     this.room.on("@consumer", async consumer => {
       const {
@@ -68,6 +72,7 @@ module.exports = class Viewer extends EventEmitter{
     if(this.tracks.audio !== null) stream.addTrack(this.tracks.audio.track)
     if(this.tracks.video !== null) stream.addTrack(this.tracks.video.track)
     this.video.srcObject = stream
+
     this.isActive = true
     if(this.tracks.audio === null && this.tracks.video === null) this.isActive = false
   //  console.log('active', isActive)

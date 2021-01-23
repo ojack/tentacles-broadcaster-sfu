@@ -1,4 +1,4 @@
-# mediasoup server for vitalsigns
+# test mediasoup server
 
 Minimal simple broadcaster created using mediasoup `v3`.
 

@@ -76,7 +76,7 @@ module.exports = (
     return css(el, style)
   })
 
-  return html`<div class="fixed w-100 h-100">
+  return html`<div class="">
     ${divs}
   </div>`
 }

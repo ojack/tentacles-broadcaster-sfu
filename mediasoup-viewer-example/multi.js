@@ -9,11 +9,12 @@ const server = `wss://mediasoup.tentacles.live:8000`
 const app = choo()
 app.use(mediaStore)
 app.route('/', mainView)
+app.route('/hacklab-test-room', mainView)
 app.mount('body')
 
 function mediaStore (state, emitter) {
   const viewers = keys.map((key) => {
-    const vid = html`<video class="w-100 h-100" autoplay muted controls></video>`
+    const vid = html`<video class="w-100 h-100" autoplay muted controls id=${key}></video>`
     const viewer = new Viewer({ videoEl: vid, server: server, streamKey: key })
     viewer.on('update', (tracks) => {
     //  console.log('update!!')
@@ -26,16 +27,31 @@ function mediaStore (state, emitter) {
   })
 
   window.addEventListener('resize', () => emitter.emit('render'))
+
   state.viewers = viewers
+  state.panel = {
+    width: 400
+  }
 }
 
 function mainView(state, emit) {
-  return html`<body>
-    ${createGrid({ elements: state.viewers.filter(({ viewer }) => {
+  return html`
+  <body class="w-100 h-100 bg-white flex fixed">
+  <div>
+    ${createGrid({ outerWidth: window.innerWidth - state.panel.width, elements: state.viewers.filter(({ viewer }) => {
       console.log(viewer)
       return viewer.isActive
     }).map((obj) => obj.vidEl) })}
-  </body>`
+  </div>
+  <div   class="absolute bottom-0 right-0">
+  <iframe src="https://titanembeds.com/embed/789431316936261672?defaultchannel=802523624095350805&theme=IceWyvern"
+      height=${window.innerHeight}
+      width=${state.panel.width}
+      frameborder="0"
+
+      ></iframe>
+    </div>
+  `
 }
 
 // window.onload = () => {
